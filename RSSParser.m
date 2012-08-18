@@ -23,7 +23,6 @@
 	if (self.synchronous) {
 		NSURL *contentUrl = [[NSURL alloc] initWithString:self.url];
 		xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:contentUrl];
-		[contentUrl release];
 		[xmlParser setDelegate:self];
 	}
 	return self;
@@ -41,9 +40,6 @@
 
 - (void) dealloc {
 	[xmlParser setDelegate:NULL];
-	[xmlParser release];
-	self.url = NULL;
-	[super dealloc];
 }
 
 // self
@@ -52,7 +48,6 @@
 	if (!self.synchronous) {
 		NSURL *contentUrl = [[NSURL alloc] initWithString:self.url];
 		xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:contentUrl];
-		[contentUrl release];
 		[xmlParser setDelegate:self];
 	}
 	[xmlParser parse];
@@ -67,18 +62,12 @@
 }
 
 - (void) parserDidEndDocument:(NSXMLParser *)parser {
-	[tagStack release];
-	[tagPath release];
 	if ([delegate respondsToSelector:@selector(rssParser:parsedFeed:)]) {
 		[delegate rssParser:self parsedFeed:feed];
 	}
-	[feed release];
 }
 
 - (void) parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)error {
-	[tagStack release];
-	[tagPath release];
-	[feed release];
 	if ([delegate respondsToSelector:@selector(rssParser:errorOccurred:)]) {
 		[delegate rssParser:self errorOccurred:error];
 	}
@@ -100,9 +89,7 @@
 	[context setObject:attributes forKey:@"attributes"];
 	NSMutableString *text = [[NSMutableString alloc] init];
 	[context setObject:text forKey:@"text"];
-	[text release];
 	[tagStack addObject:context];
-	[context release];
 	[tagPath appendPathComponent:element];
 }
 
@@ -155,7 +142,6 @@
 		cloudService.procedure = [attributes objectForKey:@"registerProcedure"];
 		cloudService.protocol = [attributes objectForKey:@"protocol"];
 		feed.cloudService = cloudService;
-		[cloudService release];
 	} else if ([tagPath isEqualToString:@"/rss/channel/lastBuildDate"] || [tagPath isEqualToString:@"/feed/updated"]) {
 		feed.date = text;
 	} else if ([tagPath isEqualToString:@"/rss/channel/managingEditor"]) {
@@ -200,7 +186,6 @@
 		media.length = [[attributes objectForKey:@"length"] intValue];
 		media.type = [attributes objectForKey:@"type"];
 		entry.attachedMedia = media;
-		[media release];
 	} else if ([tagPath isEqualToString:@"/rss/channel/item/guid"] || [tagPath isEqualToString:@"/feed/entry/id"]) {
 		entry.uid = text;
 	} else if ([tagPath isEqualToString:@"/rss/channel/item/pubDate"] || [tagPath isEqualToString:@"/feed/entry/updated"]) {
@@ -209,7 +194,6 @@
 		entry.copyright = text;
 	} else if ([tagPath isEqualToString:@"/rss/channel/item"] || [tagPath isEqualToString:@"/feed/entry"]) {
 		[feed.articles addObject:entry];
-		[entry release];
 	}
 	[tagStack removeLastObject];
 	[tagPath deleteLastPathComponent];
@@ -226,7 +210,6 @@
 	NSMutableDictionary *context = [tagStack lastObject];
 	NSMutableString *text = [context objectForKey:@"text"];
 	[text appendString:string];
-	[string release];
 }
 
 @end

@@ -30,20 +30,20 @@
 }
 
 @property (nonatomic, assign) RSSFeedType type;
-@property (nonatomic, retain) NSString *title;
-@property (nonatomic, retain) NSString *description;
-@property (nonatomic, retain) NSString *url;
-@property (nonatomic, retain) NSString *date;
-@property (nonatomic, retain) NSString *author;
-@property (nonatomic, retain) NSMutableArray *articles;
-@property (nonatomic, retain) NSString *uid;
-@property (nonatomic, retain) NSString *language;
-@property (nonatomic, retain) NSString *copyright;
-@property (nonatomic, retain) NSMutableArray *categories;
-@property (nonatomic, retain) NSString *generator;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *description;
+@property (nonatomic, strong) NSString *url;
+@property (nonatomic, strong) NSString *date;
+@property (nonatomic, strong) NSString *author;
+@property (nonatomic, strong) NSMutableArray *articles;
+@property (nonatomic, strong) NSString *uid;
+@property (nonatomic, strong) NSString *language;
+@property (nonatomic, strong) NSString *copyright;
+@property (nonatomic, strong) NSMutableArray *categories;
+@property (nonatomic, strong) NSString *generator;
 @property (nonatomic, assign) NSTimeInterval validTime;
-@property (nonatomic, retain) NSString *iconUrl;
-@property (nonatomic, retain) RSSCloudService *cloudService;
+@property (nonatomic, strong) NSString *iconUrl;
+@property (nonatomic, strong) RSSCloudService *cloudService;
 
 
 @end

@@ -15,9 +15,9 @@
 	NSString *type;
 }
 
-@property (nonatomic, retain) NSString *url;
+@property (nonatomic, strong) NSString *url;
 @property (nonatomic, assign) int length;
-@property (nonatomic, retain) NSString *type;
+@property (nonatomic, strong) NSString *type;
 
 @end
 

@@ -14,18 +14,18 @@
 @protocol RSSParserDelegate;
 
 
-@interface RSSParser: NSObject {
+@interface RSSParser: NSObject <NSXMLParserDelegate> {
 	NSString *url;
 	NSXMLParser *xmlParser;
 	NSMutableArray *tagStack;
 	NSMutableString *tagPath;
 	RSSFeed *feed;
 	RSSEntry *entry;
-	id <RSSParserDelegate> delegate;
+	id <RSSParserDelegate> __weak delegate;
 }
 
-@property (nonatomic, assign) id <RSSParserDelegate> delegate;
-@property (nonatomic, retain) NSString *url;
+@property (nonatomic, weak) id <RSSParserDelegate> delegate;
+@property (nonatomic, strong) NSString *url;
 @property (nonatomic, assign) BOOL synchronous;
 
 - (id) initWithUrl:(NSString *)theUrl synchronous:(BOOL)sync;

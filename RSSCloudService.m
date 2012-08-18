@@ -17,13 +17,6 @@
 @synthesize procedure;
 @synthesize protocol;
 
-- (void) dealloc {
-	self.domain = NULL;
-	self.path = NULL;
-	self.procedure = NULL;
-	self.protocol = NULL;
-	[super dealloc];
-}
 
 @end
 
