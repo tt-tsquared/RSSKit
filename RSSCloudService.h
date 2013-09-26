@@ -17,11 +17,11 @@
 	NSString *protocol;
 }
 
-@property (nonatomic, retain) NSString *domain;
+@property (nonatomic, strong) NSString *domain;
 @property (nonatomic, assign) int port;
-@property (nonatomic, retain) NSString *path;
-@property (nonatomic, retain) NSString *procedure;
-@property (nonatomic, retain) NSString *protocol;
+@property (nonatomic, strong) NSString *path;
+@property (nonatomic, strong) NSString *procedure;
+@property (nonatomic, strong) NSString *protocol;
 
 @end
 

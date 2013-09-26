@@ -24,17 +24,17 @@
 	NSString *author;
 }
 
-@property (nonatomic, retain) NSString *title;
-@property (nonatomic, retain) NSString *url;
-@property (nonatomic, retain) NSString *uid;
-@property (nonatomic, retain) NSString *date;
-@property (nonatomic, retain) NSString *summary;
-@property (nonatomic, retain) NSMutableArray *categories;
-@property (nonatomic, retain) NSString *comments;
-@property (nonatomic, retain) NSString *content;
-@property (nonatomic, retain) NSString *copyright;
-@property (nonatomic, retain) RSSAttachedMedia *attachedMedia;
-@property (nonatomic, retain) NSString *author;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *url;
+@property (nonatomic, strong) NSString *uid;
+@property (nonatomic, strong) NSString *date;
+@property (nonatomic, strong) NSString *summary;
+@property (nonatomic, strong) NSMutableArray *categories;
+@property (nonatomic, strong) NSString *comments;
+@property (nonatomic, strong) NSString *content;
+@property (nonatomic, strong) NSString *copyright;
+@property (nonatomic, strong) RSSAttachedMedia *attachedMedia;
+@property (nonatomic, strong) NSString *author;
 
 @end
 
