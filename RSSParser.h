@@ -30,6 +30,8 @@
 
 - (id) initWithUrl:(NSString *)theUrl synchronous:(BOOL)sync;
 - (id) initWithUrl:(NSString *)theUrl;
+- (id)initWithParser:(NSXMLParser *)parser;
+
 - (void) parse;
 
 @end

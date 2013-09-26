@@ -33,6 +33,17 @@
 	return self;
 }
 
+- (id)initWithParser:(NSXMLParser *)parser
+{
+    if ((self = [super init]) != nil) {
+        self.synchronous = NO;
+        xmlParser = parser;
+        [xmlParser setDelegate:self];
+    }
+    
+    return self;
+}
+
 - (id) init {
 	self = [self initWithUrl:NULL];
 	return self;
@@ -46,9 +57,11 @@
 
 - (void) parse {
 	if (!self.synchronous) {
-		NSURL *contentUrl = [[NSURL alloc] initWithString:self.url];
-		xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:contentUrl];
-		[xmlParser setDelegate:self];
+        if (xmlParser == nil) {
+            NSURL *contentUrl = [[NSURL alloc] initWithString:self.url];
+            xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:contentUrl];
+            [xmlParser setDelegate:self];
+        }
 	}
 	[xmlParser parse];
 }
@@ -97,13 +110,13 @@
 	NSMutableDictionary *context = [tagStack lastObject];
 	NSMutableString *text = [context objectForKey:@"text"];
 	NSDictionary *attributes = [context objectForKey:@"attributes"];
-	if ([tagPath isEqualToString:@"/rss/channel/title"] || [tagPath isEqualToString:@"/feed/title"]) {
+	if ([tagPath hasSuffix:@"/channel/title"] || [tagPath isEqualToString:@"/feed/title"]) {
 		feed.title = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/description"] || [tagPath isEqualToString:@"/feed/subtitle"]) {
-		feed.description = text;
+	} else if ([tagPath hasSuffix:@"/channel/description"] || [tagPath isEqualToString:@"/feed/subtitle"]) {
+		feed.feedDescription = text;
 	} else if ([tagPath isEqualToString:@"/feed/id"]) {
 		feed.uid = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/link"] || [tagPath isEqualToString:@"/feed/link"]) {
+	} else if ([tagPath hasSuffix:@"/channel/link"] || [tagPath isEqualToString:@"/feed/link"]) {
 		// RSS 2.0 or Atom 1.0?
 			NSString *href = [attributes objectForKey:@"href"];
 		if (href) {
@@ -113,11 +126,11 @@
 			// RSS 2.0
 			feed.url = text;
 		}
-	} else if ([tagPath isEqualToString:@"/rss/channel/language"]) {
+	} else if ([tagPath hasSuffix:@"/channel/language"]) {
 		feed.language = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/copyright"] || [tagPath isEqualToString:@"/feed/rights"]) {
+	} else if ([tagPath hasSuffix:@"/channel/copyright"] || [tagPath isEqualToString:@"/feed/rights"]) {
 		feed.copyright = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/category"] || [tagPath isEqualToString:@"/feed/category"]) {
+	} else if ([tagPath hasSuffix:@"/channel/category"] || [tagPath isEqualToString:@"/feed/category"]) {
 		// RSS 2.0 or Atom 1.0?
 		NSString *term = [attributes objectForKey:@"term"];
 		if (term) {
@@ -128,13 +141,13 @@
 			[feed.categories addObject:text];
 		}
 		
-	} else if ([tagPath isEqualToString:@"/rss/channel/generator"] || [tagPath isEqualToString:@"/feed/generator"]) {
+	} else if ([tagPath hasSuffix:@"/channel/generator"] || [tagPath isEqualToString:@"/feed/generator"]) {
 		feed.generator = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/ttl"]) {
+	} else if ([tagPath hasSuffix:@"/channel/ttl"]) {
 		feed.validTime = [text floatValue];
-	} else if ([tagPath isEqualToString:@"/rss/channel/image/url"] || [tagPath isEqualToString:@"/feed/icon"]) {
+	} else if ([tagPath hasSuffix:@"channel/image/url"] || [tagPath isEqualToString:@"/feed/icon"]) {
 		feed.iconUrl = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/cloud"]) {
+	} else if ([tagPath hasSuffix:@"/channel/cloud"]) {
 		RSSCloudService *cloudService = [[RSSCloudService alloc] init];
 		cloudService.domain = [attributes objectForKey:@"domain"];
 		cloudService.port = [[attributes objectForKey:@"port"] intValue];
@@ -142,17 +155,18 @@
 		cloudService.procedure = [attributes objectForKey:@"registerProcedure"];
 		cloudService.protocol = [attributes objectForKey:@"protocol"];
 		feed.cloudService = cloudService;
-	} else if ([tagPath isEqualToString:@"/rss/channel/lastBuildDate"] || [tagPath isEqualToString:@"/rss/channel/dc:date"] || [tagPath isEqualToString:@"/feed/updated"]) {
+	} else if ([tagPath hasSuffix:@"/channel/lastBuildDate"] || [tagPath hasSuffix:@"/channel/dc:date"] || [tagPath isEqualToString:@"/feed/updated"]) {
+	} else if ([tagPath hasSuffix:@"/channel/lastBuildDate"] || [tagPath isEqualToString:@"/feed/updated"]) {
 		feed.date = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/managingEditor"]) {
+	} else if ([tagPath hasSuffix:@"/channel/managingEditor"]) {
 		feed.author = text;
 	} else if ([tagPath isEqualToString:@"/feed/author/name"]) {
 		feed.author = feed.author ? [NSString stringWithFormat:@"%@ (%@)", text, feed.author] : text;
 	} else if ([tagPath isEqualToString:@"/feed/author/email"]) {
 		feed.author = feed.author ? [NSString stringWithFormat:@"%@ (%@)", feed.author, text] : text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/title"] || [tagPath isEqualToString:@"/feed/entry/title"]) {
+	} else if ([tagPath hasSuffix:@"/item/title"] || [tagPath isEqualToString:@"/feed/entry/title"]) {
 		entry.title = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/link"] || [tagPath isEqualToString:@"/feed/entry/link"]) {
+	} else if ([tagPath hasSuffix:@"/item/link"] || [tagPath isEqualToString:@"/feed/entry/link"]) {
 		// RSS 2.0 or Atom 1.0?
 		NSString *href = [attributes objectForKey:@"href"];
 		if (href) {
@@ -162,9 +176,9 @@
 			// RSS 2.0
 			entry.url = text;
 		}
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/description"] || [tagPath isEqualToString:@"/feed/entry/summary"]) {
+	} else if ([tagPath hasSuffix:@"/item/description"] || [tagPath isEqualToString:@"/feed/entry/summary"]) {
 		entry.summary = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/category"] || [tagPath isEqualToString:@"/feed/entry/category"]) {
+	} else if ([tagPath hasSuffix:@"/item/category"] || [tagPath isEqualToString:@"/feed/entry/category"]) {
 		// RSS 2.0 or Atom 1.0?
 		NSString *term = [attributes objectForKey:@"term"];
 		if (term) {
@@ -174,25 +188,25 @@
 			// RSS 2.0
 			[entry.categories addObject:text];
 		}
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/comments"] || [tagPath isEqualToString:@""]) {
+	} else if ([tagPath hasSuffix:@"/item/comments"] || [tagPath isEqualToString:@""]) {
 		entry.comments = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/author"] || [tagPath isEqualToString:@"/feed/entry/author/name"]) {
+	} else if ([tagPath hasSuffix:@"/item/author"] || [tagPath isEqualToString:@"/feed/entry/author/name"]) {
 		entry.author = text;
-	} else if ([tagPath isEqualToString:@"/feed/entry/content"] || [tagPath isEqualToString:@"/rss/channel/item/content:encoded"]) {
+	} else if ([tagPath isEqualToString:@"/feed/entry/content"] || [tagPath hasSuffix:@"/channel/item/content:encoded"]) {
 		entry.content = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/enclosure"]) {	
+	} else if ([tagPath hasSuffix:@"/item/enclosure"]) {
 		RSSAttachedMedia *media = [[RSSAttachedMedia alloc] init];
 		media.url = [attributes objectForKey:@"url"];
 		media.length = [[attributes objectForKey:@"length"] intValue];
 		media.type = [attributes objectForKey:@"type"];
 		entry.attachedMedia = media;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/guid"] || [tagPath isEqualToString:@"/feed/entry/id"]) {
+	} else if ([tagPath hasSuffix:@"/item/guid"] || [tagPath isEqualToString:@"/feed/entry/id"]) {
 		entry.uid = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item/pubDate"] || [tagPath isEqualToString:@"/rss/channel/item/dc:date"] || [tagPath isEqualToString:@"/feed/entry/updated"]) {
+	} else if ([tagPath isEqualToString:@"/item/pubDate"] || [tagPath hasSuffix:@"/channel/item/dc:date"] || [tagPath isEqualToString:@"/feed/entry/updated"]) {
 		entry.date = text;
 	} else if ([tagPath isEqualToString:@"/feed/entry/rights"]) {
 		entry.copyright = text;
-	} else if ([tagPath isEqualToString:@"/rss/channel/item"] || [tagPath isEqualToString:@"/feed/entry"]) {
+	} else if ([tagPath hasSuffix:@"/item"] || [tagPath isEqualToString:@"/feed/entry"]) {
 		[feed.articles addObject:entry];
 	}
 	[tagStack removeLastObject];

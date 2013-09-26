@@ -13,7 +13,7 @@
 
 @synthesize type;
 @synthesize title;
-@synthesize description;
+@synthesize feedDescription;
 @synthesize url;
 @synthesize date;
 @synthesize author;

@@ -10,18 +10,8 @@
 #import "RSSAttachedMedia.h"
 
 
-@interface RSSEntry: NSObject {
-	NSString *title;
-	NSString *url;
-	NSString *uid;
-	NSString *date;
-	NSString *summary;
-	NSMutableArray *categories;
-	NSString *comments;
-	NSString *content;
-	NSString *copyright;
-	RSSAttachedMedia *attachedMedia;
-	NSString *author;
+@interface RSSEntry: NSObject
+{
 }
 
 @property (nonatomic, strong) NSString *title;

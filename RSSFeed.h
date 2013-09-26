@@ -31,7 +31,7 @@
 
 @property (nonatomic, assign) RSSFeedType type;
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSString *description;
+@property (nonatomic, strong) NSString *feedDescription;
 @property (nonatomic, strong) NSString *url;
 @property (nonatomic, strong) NSString *date;
 @property (nonatomic, strong) NSString *author;

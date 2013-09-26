@@ -11,18 +11,6 @@
 
 @implementation RSSEntry
 
-@synthesize title;
-@synthesize url;
-@synthesize uid;
-@synthesize date;
-@synthesize summary;
-@synthesize categories;
-@synthesize comments;
-@synthesize content;
-@synthesize copyright;
-@synthesize attachedMedia;
-@synthesize author;
-
 - (id) init {
 	self = [super init];
 	NSMutableArray *theCategories = [[NSMutableArray alloc] init];
